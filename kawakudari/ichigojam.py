@@ -1,3 +1,7 @@
+DIR_UP = 1
+DIR_RIGHT = 2
+DIR_DOWN = 3
+DIR_LEFT = 4
 
 CHAR_W = 8
 CHAR_H = 8
@@ -44,13 +48,29 @@ class Std15:
             for x in range(self.buff_w):
                 self.set_char(x,y,0)
                 
-    def scroll (self):
+    def scroll (self,dir):
         for y in range(self.buff_h):
             for x in range(self.buff_w):
-                if y == self.buff_h-1:
-                    self.set_char(x,y,0)
-                else:
-                    self.set_char(x,y,self.scr(x,y+1))
+                if dir == DIR_UP:
+                    if y == self.buff_h-1:
+                        self.set_char(x,y,0)
+                    else:
+                        self.set_char(x,y,self.scr(x,y+1))
+                elif dir == DIR_RIGHT:
+                    if x == self.buff_w-1:
+                        self.set_char(self.buff_w-x-1,y,0)
+                    else:
+                        self.set_char(self.buff_w-x-1,y,self.scr((self.buff_w-x-1)-1,y))
+                elif dir == DIR_DOWN:
+                    if y == self.buff_h-1:
+                        self.set_char(x,self.buff_h-y-1,0)
+                    else:
+                        self.set_char(x,self.buff_h-y-1,self.scr(x,(self.buff_h-y-1)-1))
+                elif dir == DIR_LEFT:
+                    if x == self.buff_w-1:
+                        self.set_char(x,y,0)
+                    else:
+                        self.set_char(x,y,self.scr(x+1,y))
         
     def set_char (self, x, y, c):
         self.buff[y*self.buff_w+x] = c
