@@ -22,6 +22,19 @@ class Std15:
 
     def putc (self, c):
         self.set_char(self.cursor_x, self.cursor_y,c)
+        if self.cursor_x < self.buff_w -1:
+            self.cursor_x +=1
+        else:
+            if self.cursor_y < self.buff_h -1:
+                self.cursor_x = 0
+                self.cursor_y +=1
+
+    def putstr (self, s):
+        for c in s:
+            self.putc(ord(c))
+
+    def putnum (self, n):
+        self.putstr(str(n))
 
     def scr (self, x, y):
         return self.buff [y*self.buff_w+x]
