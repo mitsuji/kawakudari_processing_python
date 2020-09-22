@@ -1,4 +1,5 @@
 from ichigojam import Std15
+from ichigojam import DIR_UP, DIR_RIGHT, DIR_DOWN, DIR_LEFT
 
 
 def setup():
@@ -30,7 +31,7 @@ def draw():
         std15.putc(ord('0'))
         std15.locate(floor(random(32)), 23)
         std15.putc(ord('*'))
-        std15.scroll()
+        std15.scroll(DIR_UP)
         
         if std15.scr(x, 5) != 0:
             std15.locate(0,23)
