@@ -71,6 +71,27 @@ class Std15:
                         self.set_char(x,y,0)
                     else:
                         self.set_char(x,y,self.scr(x+1,y))
+
+    def pset (self, x, y):
+        cx = x // 2
+        cy = y // 2
+        c = self.scr(cx,cy)
+
+        tx = x % 2
+        ty = y % 2
+        if ty == 0 and tx == 0:
+            b = 1
+        elif ty == 0 and tx != 0:
+            b = 2
+        elif ty != 0 and tx == 0:
+            b = 4
+        else:
+            b = 8
+
+        if (c & 0xf0) == 0x80:
+            self.set_char(cx,cy, c | b)
+        else:
+            self.set_char(cx,cy, 0x80 | b)
         
     def set_char (self, x, y, c):
         self.buff[y*self.buff_w+x] = c
