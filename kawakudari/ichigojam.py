@@ -1,19 +1,17 @@
 
-CHAR_SX = 8
-CHAR_SY = 8
+CHAR_W = 8
+CHAR_H = 8
 
 class Std15:
     
-    def __init__(self, screen_sx, screen_sy, cb_sx, cb_sy):
-        background(0)
-        fill(0xff)
-        noStroke()
-        self.screen_sx = screen_sx
-        self.screen_sy = screen_sy
-        self.cb_sx = cb_sx
-        self.cb_sy = cb_sy
-        self.cb_unit = screen_sx / cb_sx / CHAR_SX
-        self.charBuff = [0 for _ in range (cb_sx * cb_sy)]
+    def __init__(self, screen_w, screen_h, buff_w, buff_h):
+        self.screen_w = screen_w
+        self.screen_h = screen_h
+        self.buff_w = buff_w
+        self.buff_h = buff_h
+        self.buff = [0 for _ in range (buff_w * buff_h)]
+        self.dot_w = screen_w / buff_w / CHAR_W
+        self.dot_h = screen_h / buff_h / CHAR_H
         self.cursor_x = 0
         self.cursor_y = 0
         self.cls()
@@ -23,44 +21,53 @@ class Std15:
         self.cursor_y = y
 
     def putc (self, c):
-        self.putcLoc(self.cursor_x, self.cursor_y,c)
-                        
-    def putcLoc (self, x, y, c):
-        self.charBuff[y*self.cb_sx+x] = c
-        
+        self.set_char(self.cursor_x, self.cursor_y,c)
+
     def scr (self, x, y):
-        return self.charBuff [y*self.cb_sx+x]
+        return self.buff [y*self.buff_w+x]
         
     def cls (self):
-        for y in range(self.cb_sy):
-            for x in range(self.cb_sx):
-                self.charBuff [y*self.cb_sx+x] = 0
+        for y in range(self.buff_h):
+            for x in range(self.buff_w):
+                self.set_char(x,y,0)
                 
     def scroll (self):
-        for y in range(self.cb_sy):
-            for x in range(self.cb_sx):
-                if y == self.cb_sy-1:
-                    self.charBuff [y*self.cb_sx+x] = 0
+        for y in range(self.buff_h):
+            for x in range(self.buff_w):
+                if y == self.buff_h-1:
+                    self.set_char(x,y,0)
                 else:
-                    self.charBuff [y*self.cb_sx+x] = self.charBuff [(y+1)*self.cb_sx+x]
+                    self.set_char(x,y,self.scr(x,y+1))
         
-    def mapchar (self, cx, cy, c):
-        glyph = FONT[c]
-        for y in range(CHAR_SY):
-            line = (glyph >> ((CHAR_SY-y-1)*CHAR_SX)) & 0xff
-            for x in range(CHAR_SX):
-                if ((line >> (CHAR_SX-x-1)) & 0x1):
-                    rect((cx*8+x)*self.cb_unit, (cy*8+y)*self.cb_unit, self.cb_unit, self.cb_unit)
+    def set_char (self, x, y, c):
+        self.buff[y*self.buff_w+x] = c
         
-    def pAppletDraw (self):
+    def draw_char (self, x, y, c):
+        if c != 0:
+            glyph = ICHIGOJAM_FONT[c]
+            for cy in range(CHAR_H):
+                line = (glyph >> ((CHAR_H-cy-1)*CHAR_W)) & 0xff
+                for cx in range(CHAR_W):
+                    if ((line >> (CHAR_W-cx-1)) & 0x1) == 0x1:
+                        fill(0xff)
+                        noStroke()
+                        rect((x*CHAR_W+cx)*self.dot_w, (y*CHAR_H+cy)*self.dot_h, self.dot_w, self.dot_h)
+
+    def draw_screen (self):
+        background(0)
         clear()
-        for y in range(self.cb_sy):
-            for x in range(self.cb_sx):
-                self.mapchar(x, y, self.charBuff [y*self.cb_sx+x])
+        for y in range(self.buff_h):
+            for x in range(self.buff_w):
+                self.draw_char(x, y, self.scr(x,y))
                 
         
-        
-FONT = [
+#
+#
+# CC BY IchigoJam & mitsuji.org
+# https://mitsuji.github.io/ichigojam-font.json/
+#
+#
+ICHIGOJAM_FONT = [
     0x0000000000000000L, 
     0xffffffffffffffffL, 
     0xffaaff55ffaaff55L, 
@@ -317,6 +324,6 @@ FONT = [
     0x0018587e0a182e62L, 
     0x1818080808080818L, 
     0x043e2f566ad6acf0L
-        ]
+]
 
                                         

@@ -31,4 +31,4 @@ def draw():
         if std15.scr(x, 5) != 0:
            running = False 
     
-    std15.pAppletDraw()
+    std15.draw_screen()
