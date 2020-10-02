@@ -76,22 +76,9 @@ class Std15:
         cx = x // 2
         cy = y // 2
         c = self.scr(cx,cy)
-
-        tx = x % 2
-        ty = y % 2
-        if ty == 0 and tx == 0:
-            b = 1
-        elif ty == 0 and tx != 0:
-            b = 2
-        elif ty != 0 and tx == 0:
-            b = 4
-        else:
-            b = 8
-
-        if (c & 0xf0) == 0x80:
-            self.set_char(cx,cy, c | b)
-        else:
-            self.set_char(cx,cy, 0x80 | b)
+        b = 2 ** (((y%2)<<1)+(x%2))
+        d = (c if ((c & 0xf0) == 0x80) else 0x80) | b
+        self.set_char(cx,cy, d)
         
     def set_char (self, x, y, c):
         self.buff[y*self.buff_w+x] = c
